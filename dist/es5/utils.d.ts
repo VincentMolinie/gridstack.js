@@ -74,6 +74,7 @@ export declare class Utils {
     static throttle(func: () => void, delay: number): () => void;
     static removePositioningStyles(el: HTMLElement): void;
     static getPositionContainerElement(el: HTMLElement): HTMLElement;
+    static getContainerForPositionFixedElement(el: HTMLElement | HTMLHtmlElement): HTMLElement;
     /** single level clone, returning a new object with same top fields. This will share sub objects and arrays */
     static clone<T>(obj: T): T;
     /**

@@ -429,6 +429,17 @@ var Utils = /** @class */ (function () {
             return this.getPositionContainerElement(el.parentElement);
         }
     };
+    Utils.getContainerForPositionFixedElement = function (el) {
+        if (el === document.body.parentElement)
+            return el;
+        var style = getComputedStyle(el);
+        if (style.transform && style.transform !== 'none') {
+            return el;
+        }
+        else {
+            return this.getContainerForPositionFixedElement(el.parentElement);
+        }
+    };
     /** @internal */
     Utils.updateScrollPosition = function (el, position, distance) {
         // is widget in view?

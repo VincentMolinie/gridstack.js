@@ -302,10 +302,11 @@ var DDDraggable = exports.DDDraggable = /** @class */ (function (_super) {
         var _b, _c;
         var style = this.helper.style;
         var scaleX = (_a = utils_1.Utils.getScaleForElement(this.helper), _a.scaleX), scaleY = _a.scaleY;
-        // when an element is scaled, the helper is positioned relative to it's parent, so we need to remove the extra offset
-        var containementRect = this.helperContainment.getBoundingClientRect();
-        var offsetX = scaleX === 1 ? 0 : containementRect.left;
-        var offsetY = scaleY === 1 ? 0 : containementRect.top;
+        var transformParent = utils_1.Utils.getContainerForPositionFixedElement(this.helper);
+        var transformParentRect = transformParent.getBoundingClientRect();
+        // when an element is scaled, the helper is positioned relative to the first transformed parent, so we need to remove the extra offset
+        var offsetX = transformParentRect.left;
+        var offsetY = transformParentRect.top;
         // Position the element under the mouse
         var x = (e.clientX - offsetX - (((_b = this._originalMousePositionInsideElement) === null || _b === void 0 ? void 0 : _b.x) || 0)) / scaleX;
         var y = (e.clientY - offsetY - (((_c = this._originalMousePositionInsideElement) === null || _c === void 0 ? void 0 : _c.y) || 0)) / scaleY;
@@ -327,13 +328,14 @@ var DDDraggable = exports.DDDraggable = /** @class */ (function (_super) {
     DDDraggable.prototype.ui = function () {
         var _a;
         var containmentEl = this.el.parentElement;
+        var scrollElement = utils_1.Utils.getScrollElement(this.el.parentElement);
         var containmentRect = containmentEl.getBoundingClientRect();
         var offset = this.helper.getBoundingClientRect();
         var scaleX = (_a = utils_1.Utils.getScaleForElement(this.helper), _a.scaleX), scaleY = _a.scaleY;
         return {
             position: {
-                top: (offset.top - containmentRect.top) / scaleY,
-                left: (offset.left - containmentRect.left) / scaleX,
+                top: (offset.top - containmentRect.top + scrollElement.scrollTop) / scaleY,
+                left: (offset.left - containmentRect.left + scrollElement.scrollLeft) / scaleX,
             }
             /* not used by GridStack for now...
             helper: [this.helper], //The object arr representing the helper that's being dragged.
