@@ -384,7 +384,7 @@ export class Utils {
         }
     }
     static getContainerForPositionFixedElement(el) {
-        if (el === document.body.parentElement)
+        if (el === document.documentElement)
             return el;
         const style = getComputedStyle(el);
         if (style.transform && style.transform !== 'none') {

@@ -430,7 +430,7 @@ var Utils = /** @class */ (function () {
         }
     };
     Utils.getContainerForPositionFixedElement = function (el) {
-        if (el === document.body.parentElement)
+        if (el === document.documentElement)
             return el;
         var style = getComputedStyle(el);
         if (style.transform && style.transform !== 'none') {

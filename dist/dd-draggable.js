@@ -299,10 +299,14 @@ class DDDraggable extends DDBaseImplement {
         const containmentRect = containmentEl.getBoundingClientRect();
         const offset = this.helper.getBoundingClientRect();
         const { scaleX, scaleY } = Utils.getScaleForElement(this.helper);
+        // When an element is inside a scrolled element, the boundingClientRect will return the position of the element minus the scroll.
+        const parentPositionIncludingScroll = containmentEl === scrollElement
+            ? { top: containmentRect.top + scrollElement.scrollTop, left: containmentRect.left + scrollElement.scrollLeft }
+            : { top: containmentRect.top, left: containmentRect.left };
         return {
             position: {
-                top: (offset.top - containmentRect.top + scrollElement.scrollTop) / scaleY,
-                left: (offset.left - containmentRect.left + scrollElement.scrollLeft) / scaleX,
+                top: (offset.top - parentPositionIncludingScroll.top) / scaleY,
+                left: (offset.left - parentPositionIncludingScroll.left) / scaleX,
             }
             /* not used by GridStack for now...
             helper: [this.helper], //The object arr representing the helper that's being dragged.
