@@ -36,7 +36,7 @@
     "lint": "tsc --noEmit && eslint src/*.ts",
     "reset": "rm -rf dist node_modules",
     "prepublishOnly": "yarn build",
-    "prepare": "yarn build"
+    "prepare": "yarn build:es6"
   },
   "keywords": [
     "Typescript",
