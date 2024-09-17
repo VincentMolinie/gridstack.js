@@ -388,13 +388,13 @@ export class Utils {
   static getContainerOfGridStackItem(el: HTMLElement): HTMLElement {
     if (!el) return null;
 
-    return el.classList.contains('grid-stack-item')
+    return el.classList.contains('grid-stack-item') || el.classList.contains('grid-stack')
       ? el.parentElement
       : Utils.getContainerOfGridStackItem(el.parentElement);
   }
 
   static getContainerForPositionFixedElement(el: HTMLElement): HTMLElement {
-    while (el !== document.documentElement && el.parentElement && getComputedStyle(el as HTMLElement).transform === 'none') {
+    while (el && el !== document.documentElement && el.parentElement && getComputedStyle(el as HTMLElement).transform === 'none') {
       el = el.parentElement;
     }
 
