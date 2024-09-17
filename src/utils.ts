@@ -225,7 +225,7 @@ export class Utils {
         unit = match[2] || 'px';
         h = parseFloat(match[1]);
       }
-    } else {
+    } else if (typeof val === 'number') {
       h = val;
     }
     return { h, unit };
