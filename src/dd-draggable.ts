@@ -316,7 +316,7 @@ export class DDDraggable extends DDBaseImplement implements HTMLElementExtendOpt
   protected _dragFollow(e: DragEvent): void {
     const style = this.helper.style;
     const { scaleX, scaleY } = Utils.getScaleForElement(this.helper);
-    const parentOfItem = Utils.getContainerOfGridStackItem(this.helper);
+    const parentOfItem = Utils.getContainerOfGridStackItem(this.helper) || document.documentElement;
     const transformParent = Utils.getContainerForPositionFixedElement(parentOfItem);
     const scrollParent = Utils.getScrollElement(this.helper);
     // We need to be careful here as the html element actually also includes scroll
