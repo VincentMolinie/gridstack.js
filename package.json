@@ -5,7 +5,8 @@
   "author": "Alain Dumesny <alaind831+github@gmail.com> (https://github.com/adumesny)",
   "contributors": [
     "Pavel Reznikov <pashka.reznikov@gmail.com>",
-    "Dylan Weiss <dylan.weiss@gmail.com> (https://dylandreams.com)"
+    "Dylan Weiss <dylan.weiss@gmail.com> (https://dylandreams.com)",
+    "Vincent Molinié <molinie.vincent@gmail.com>"
   ],
   "description": "TypeScript/JS lib for dashboard layout and creation, responsive, mobile support, no external dependencies, with many wrappers (React, Angular, Vue, Ember, knockout...)",
   "main": "./dist/gridstack.js",
@@ -14,30 +15,18 @@
     "type": "git",
     "url": "git+https://github.com/gridstack/gridstack.js.git"
   },
-  "funding": [
-    {
-      "type": "paypal",
-      "url": "https://www.paypal.me/alaind831"
-    },
-    {
-      "type": "venmo",
-      "url": "https://www.venmo.com/adumesny"
-    }
-  ],
   "scripts": {
     "build": "yarn build:css && yarn build:es6 && yarn build:es5",
     "build:es6": "webpack && tsc --stripInternal",
     "build:es5": "webpack --config es5/webpack.config.js && tsc --stripInternal --project es5/tsconfig.json",
     "build:ng": "cd angular && yarn --no-progress && yarn build lib",
-    "build:css": "sass src:dist && css-minify -d dist -o dist",
+    "build:css": "yarn sass src:dist && css-minify -d dist -o dist",
     "w": "webpack",
     "t": "rm -rf dist/* && grunt && tsc --stripInternal",
     "doc": "doctoc ./README.md && doctoc ./doc/README.md && doctoc ./doc/CHANGES.md",
     "test": "yarn lint && karma start karma.conf.js",
     "lint": "tsc --noEmit && eslint src/*.ts",
-    "reset": "rm -rf dist node_modules",
-    "prepublishOnly": "yarn build",
-    "prepare": "yarn build"
+    "reset": "rm -rf dist node_modules"
   },
   "keywords": [
     "Typescript",
@@ -60,16 +49,9 @@
   },
   "homepage": "http://gridstackjs.com/",
   "dependencies": {
-  },
-  "devDependencies": {
-    "@types/jasmine": "^4.3.1",
-    "@typescript-eslint/eslint-plugin": "^5.58.0",
-    "@typescript-eslint/parser": "^5.58.0",
     "connect": "^3.7.0",
     "core-js": "^3.30.1",
     "coveralls": "^3.1.1",
-    "doctoc": "^2.2.1",
-    "eslint": "^8.38.0",
     "jasmine-core": "^4.6.0",
     "karma": "^6.4.1",
     "karma-chrome-launcher": "^3.1.1",
@@ -79,11 +61,17 @@
     "protractor": "^7.0.0",
     "serve-static": "^1.15.0",
     "css-minify": "^2.0.0",
-    "sass": "^1.62.0",
     "ts-loader": "^9.4.2",
     "typescript": "^5.0.4",
     "webpack": "^5.79.0",
-    "webpack-cli": "^5.0.1"
-
+    "webpack-cli": "^5.0.1",
+    "sass": "^1.62.0"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^4.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
+    "doctoc": "^2.2.1",
+    "eslint": "^8.38.0"
   }
 }

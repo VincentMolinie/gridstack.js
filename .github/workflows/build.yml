@@ -1,0 +1,56 @@
+name: Upload Dist
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: VincentMolinie/gridstack.js
+        ref: 'build'
+        token: ${{ secrets.GIT_TOKEN }}
+    - uses: actions/setup-node@v3
+      with:
+        cache: 'yarn'
+    - name: Setup git
+      run: |
+        git config --global user.name "Vincent Molinié"
+        git config --global user.email "vincent.m@forestadmin.com"
+    - name: Cherry-pick the latest commit
+      run: |
+        git fetch origin master
+        git cherry-pick "$GITHUB_SHA"
+    - name: Reset the build
+      run: yarn reset
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile --non-interactive --production=true
+    - name: Build
+      run: yarn build
+    - name: Verify token
+      run: |
+        curl -XGET -H 'authorization: token ${{ secrets.GIT_TOKEN }}' 'https://api.github.com/repos/VincentMolinie/gridstack.js'
+    - name: Upload dist
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        branch: build
+        commit_options: '--no-verify --amend --no-edit'
+        file_pattern: 'dist/*'
+
+        commit_user_name: Vincent Molinié # defaults to "github-actions[bot]"
+        commit_user_email: molinie.vincent@gmail.com # defaults to "41898282+github-actions[bot]@users.noreply.github.com"
+        commit_author: Vincent Molinié <molinie.vincent@gmail.com> # defaults to "username <username@users.noreply.github.com>", where "username" belongs to the author of the commit that triggered the run
+        skip_dirty_check: true
+        skip_fetch: true
