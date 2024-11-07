@@ -1,6 +1,6 @@
 /**
- * utils.ts 6.0.2-dev
- * Copyright (c) 2021-2022 Alain Dumesny - see GridStack root license
+ * utils.ts 9.4.0-dev
+ * Copyright (c) 2021 Alain Dumesny - see GridStack root license
  */
 
 import { GridStackElement, GridStackNode, GridStackOptions, numberOrString, GridStackPosition, GridStackWidget } from './types';
@@ -53,42 +53,58 @@ export function obsoleteAttr(el: HTMLElement, oldName: string, newName: string, 
  */
 export class Utils {
 
-  /** convert a potential selector into actual list of html elements */
-  static getElements(els: GridStackElement): HTMLElement[] {
+  /** convert a potential selector into actual list of html elements. optional root which defaults to document (for shadow dom) */
+  static getElements(els: GridStackElement, root: HTMLElement | Document = document): HTMLElement[] {
     if (typeof els === 'string') {
-      let list = document.querySelectorAll(els);
+      const doc = ('getElementById' in root) ? root as Document : undefined;
+
+      // Note: very common for people use to id='1,2,3' which is only legal as HTML5 id, but not CSS selectors
+      // so if we start with a number, assume it's an id and just return that one item...
+      // see https://github.com/gridstack/gridstack.js/issues/2234#issuecomment-1523796562
+      if (doc && !isNaN(+els[0])) { // start with digit
+        const el = doc.getElementById(els);
+        return el ? [el] : [];
+      }
+
+      let list = root.querySelectorAll(els);
       if (!list.length && els[0] !== '.' && els[0] !== '#') {
-        list = document.querySelectorAll('.' + els);
-        if (!list.length) { list = document.querySelectorAll('#' + els) }
+        list = root.querySelectorAll('.' + els);
+        if (!list.length) { list = root.querySelectorAll('#' + els) }
       }
       return Array.from(list) as HTMLElement[];
     }
     return [els];
   }
 
-  /** convert a potential selector into actual single element */
-  static getElement(els: GridStackElement): HTMLElement {
+  /** convert a potential selector into actual single element. optional root which defaults to document (for shadow dom) */
+  static getElement(els: GridStackElement, root: HTMLElement | Document = document): HTMLElement {
     if (typeof els === 'string') {
+      const doc = ('getElementById' in root) ? root as Document : undefined;
       if (!els.length) return null;
-      if (els[0] === '#') {
-        return document.getElementById(els.substring(1));
+      if (doc && els[0] === '#') {
+        return doc.getElementById(els.substring(1));
       }
-      if (els[0] === '.' || els[0] === '[') {
-        return document.querySelector(els);
+      if (els[0] === '#' || els[0] === '.' || els[0] === '[') {
+        return root.querySelector(els);
       }
 
       // if we start with a digit, assume it's an id (error calling querySelector('#1')) as class are not valid CSS
-      if(!isNaN(+els[0])) { // start with digit
-        return document.getElementById(els);
+      if (doc && !isNaN(+els[0])) { // start with digit
+        return doc.getElementById(els);
       }
 
-      // finally try string, then id then class
-      let el = document.querySelector(els);
-      if (!el) { el = document.getElementById(els) }
-      if (!el) { el = document.querySelector('.' + els) }
+      // finally try string, then id, then class
+      let el = root.querySelector(els);
+      if (doc && !el) { el = doc.getElementById(els) }
+      if (!el) { el = root.querySelector('.' + els) }
       return el as HTMLElement;
     }
     return els;
+  }
+
+  /** true if we should resize to content */
+  static shouldSizeToContent(n: GridStackNode | undefined): boolean {
+    return n?.grid && (!!n.sizeToContent || (n.grid.opts.sizeToContent && n.sizeToContent !== false));
   }
 
   /** returns true if a and b overlap */
@@ -123,12 +139,17 @@ export class Utils {
    * @param dir 1 for asc, -1 for desc (optional)
    * @param width width of the grid. If undefined the width will be calculated automatically (optional).
    **/
-  static sort(nodes: GridStackNode[], dir?: -1 | 1, column?: number): GridStackNode[] {
+  static sort(nodes: GridStackNode[], dir: 1 | -1 = 1, column?: number): GridStackNode[] {
     column = column || nodes.reduce((col, n) => Math.max(n.x + n.w, col), 0) || 12;
     if (dir === -1)
-      return nodes.sort((a, b) => (b.x + b.y * column)-(a.x + a.y * column));
+      return nodes.sort((a, b) => ((b.x ?? 1000) + (b.y ?? 1000) * column)-((a.x ?? 1000) + (a.y ?? 1000) * column));
     else
-      return nodes.sort((b, a) => (b.x + b.y * column)-(a.x + a.y * column));
+      return nodes.sort((b, a) => ((b.x ?? 1000) + (b.y ?? 1000) * column)-((a.x ?? 1000) + (a.y ?? 1000) * column));
+  }
+
+  /** find an item by id */
+  static find(nodes: GridStackNode[], id: string): GridStackNode | undefined {
+    return id ? nodes.find(n => n.id === id) : undefined;
   }
 
   /**
@@ -137,8 +158,10 @@ export class Utils {
    * @param parent to insert the stylesheet as first child,
    * if none supplied it will be appended to the document head instead.
    */
-  static createStylesheet(id: string, parent?: HTMLElement): CSSStyleSheet {
+  static createStylesheet(id: string, parent?: HTMLElement, options?: { nonce?: string }): CSSStyleSheet {
     let style: HTMLStyleElement = document.createElement('style');
+    const nonce = options?.nonce
+    if (nonce) style.nonce = nonce
     style.setAttribute('type', 'text/css');
     style.setAttribute('gs-style-id', id);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -192,14 +215,17 @@ export class Utils {
   static parseHeight(val: numberOrString): HeightData {
     let h: number;
     let unit = 'px';
-    if (typeof val === 'string') {
-      let match = val.match(/^(-[0-9]+\.[0-9]+|[0-9]*\.[0-9]+|-[0-9]+|[0-9]+)(px|em|rem|vh|vw|%)?$/);
-      if (!match) {
-        throw new Error('Invalid height');
+    if (val && typeof val === 'string') {
+      if (val === 'auto') h = 0;
+      else {
+        let match = val.match(/^(-[0-9]+\.[0-9]+|[0-9]*\.[0-9]+|-[0-9]+|[0-9]+)(px|em|rem|vh|vw|%)?$/);
+        if (!match) {
+          throw new Error(`Invalid height val = ${val}`);
+        }
+        unit = match[2] || 'px';
+        h = parseFloat(match[1]);
       }
-      unit = match[2] || 'px';
-      h = parseFloat(match[1]);
-    } else {
+    } else if (typeof val === 'number') {
       h = val;
     }
     return { h, unit };
@@ -236,12 +262,12 @@ export class Utils {
     return true;
   }
 
-  /** copies over b size & position (GridStackPosition), and possibly min/max as well */
+  /** copies over b size & position (GridStackPosition), and optionally min/max as well */
   static copyPos(a: GridStackWidget, b: GridStackWidget, doMinMax = false): GridStackWidget {
-    a.x = b.x;
-    a.y = b.y;
-    a.w = b.w;
-    a.h = b.h;
+    if (b.x !== undefined) a.x = b.x;
+    if (b.y !== undefined) a.y = b.y;
+    if (b.w !== undefined) a.w = b.w;
+    if (b.h !== undefined) a.h = b.h;
     if (doMinMax) {
       if (b.minW) a.minW = b.minW;
       if (b.minH) a.minH = b.minH;
@@ -253,7 +279,16 @@ export class Utils {
 
   /** true if a and b has same size & position */
   static samePos(a: GridStackPosition, b: GridStackPosition): boolean {
-    return a && b && a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h;
+    return a && b && a.x === b.x && a.y === b.y && (a.w || 1) === (b.w || 1) && (a.h || 1) === (b.h || 1);
+  }
+
+  /** given a node, makes sure it's min/max are valid */
+  static sanitizeMinMax(node: GridStackNode) {
+    // remove 0, undefine, null
+    if (!node.minW) { delete node.minW; }
+    if (!node.minH) { delete node.minH; }
+    if (!node.maxW) { delete node.maxW; }
+    if (!node.maxH) { delete node.maxH; }
   }
 
   /** removes field from the first object if same as the second objects (like diffing) and internal '_' for saving */
@@ -273,7 +308,7 @@ export class Utils {
   }
 
   /** removes internal fields '_' and default values for saving */
-  static removeInternalForSave(n: GridStackNode, removeEl = true) {
+  static removeInternalForSave(n: GridStackNode, removeEl = true): void {
     for (let key in n) { if (key[0] === '_' || n[key] === null || n[key] === undefined ) delete n[key]; }
     delete n.grid;
     if (removeEl) delete n.el;
@@ -282,16 +317,18 @@ export class Utils {
     if (!n.noResize) delete n.noResize;
     if (!n.noMove) delete n.noMove;
     if (!n.locked) delete n.locked;
+    if (n.w === 1 || n.w === n.minW) delete n.w;
+    if (n.h === 1 || n.h === n.minH) delete n.h;
   }
 
   /** return the closest parent (or itself) matching the given class */
-  static closestByClass(el: HTMLElement, name: string): HTMLElement {
-    while (el) {
-      if (el.classList.contains(name)) return el;
-      el = el.parentElement
-    }
-    return null;
-  }
+  // static closestUpByClass(el: HTMLElement, name: string): HTMLElement {
+  //   while (el) {
+  //     if (el.classList.contains(name)) return el;
+  //     el = el.parentElement
+  //   }
+  //   return null;
+  // }
 
   /** delay calling the given function for given delay, preventing new calls from happening while waiting */
   static throttle(func: () => void, delay: number): () => void {
@@ -334,6 +371,34 @@ export class Utils {
     } else {
       return this.getScrollElement(el.parentElement);
     }
+  }
+
+  static getPositionContainerElement(el: HTMLElement): HTMLElement {
+    if (!el) return null;
+
+    const style = getComputedStyle(el);
+
+    if (style.position === 'relative' || style.position === 'absolute' || style.position === 'fixed') {
+      return el;
+    } else {
+      return Utils.getPositionContainerElement(el.parentElement);
+    }
+  }
+
+  static getContainerOfGridStackItem(el: HTMLElement): HTMLElement {
+    if (!el) return null;
+
+    return el.classList.contains('grid-stack-item') || el.classList.contains('grid-stack')
+      ? el.parentElement
+      : Utils.getContainerOfGridStackItem(el.parentElement);
+  }
+
+  static getContainerForPositionFixedElement(el: HTMLElement): HTMLElement {
+    while (el && el !== document.documentElement && el.parentElement && getComputedStyle(el as HTMLElement).transform === 'none') {
+      el = el.parentElement;
+    }
+
+    return el;
   }
 
   /** @internal */
@@ -420,7 +485,7 @@ export class Utils {
    */
   static cloneDeep<T>(obj: T): T {
     // list of fields we will skip during cloneDeep (nested objects, other internal)
-    const skipFields = ['_isNested', 'el', 'grid', 'subGrid', 'engine'];
+    const skipFields = ['parentGrid', 'el', 'grid', 'subGrid', 'engine'];
     // return JSON.parse(JSON.stringify(obj)); // doesn't work with date format ?
     const ret = Utils.clone(obj);
     for (const key in ret) {
@@ -439,12 +504,12 @@ export class Utils {
     return node;
   }
 
-  public static appendTo(el: HTMLElement, parent: string | HTMLElement | Node): void {
+  public static appendTo(el: HTMLElement, parent: string | HTMLElement): void {
     let parentNode: HTMLElement;
     if (typeof parent === 'string') {
-      parentNode = document.querySelector(parent as string);
+      parentNode = Utils.getElement(parent);
     } else {
-      parentNode = parent as HTMLElement;
+      parentNode = parent;
     }
     if (parentNode) {
       parentNode.appendChild(el);
@@ -452,7 +517,7 @@ export class Utils {
   }
 
   // public static setPositionRelative(el: HTMLElement): void {
-  //   if (!(/^(?:r|a|f)/).test(window.getComputedStyle(el).position)) {
+  //   if (!(/^(?:r|a|f)/).test(getComputedStyle(el).position)) {
   //     el.style.position = "relative";
   //   }
   // }
@@ -494,7 +559,7 @@ export class Utils {
   }
 
   /** copies the MouseEvent properties and sends it as another event to the given target */
-  public static simulateMouseEvent(e: MouseEvent, simulatedType: string, target?: EventTarget) {
+  public static simulateMouseEvent(e: MouseEvent, simulatedType: string, target?: EventTarget): void {
     const simulatedEvent = document.createEvent('MouseEvents');
     simulatedEvent.initMouseEvent(
       simulatedType, // type
@@ -514,6 +579,22 @@ export class Utils {
       e.target      // relatedTarget
     );
     (target || e.target).dispatchEvent(simulatedEvent);
+  }
+
+  public static getScaleForElement(element: HTMLElement) {
+    // Check if element is visible, otherwise the width/height will be of 0
+    while (element && !element.offsetParent) {
+      element = element.parentElement;
+    }
+
+    if (!element) {
+      return { scaleX: 1, scaleY: 1 };
+    }
+
+    const boundingClientRect = element.getBoundingClientRect();
+    const scaleX = boundingClientRect.width / element.offsetWidth;
+    const scaleY = boundingClientRect.height / element.offsetHeight;
+    return { scaleX, scaleY };
   }
 
   /** returns true if event is inside the given element rectangle */

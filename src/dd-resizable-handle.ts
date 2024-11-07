@@ -1,5 +1,5 @@
 /**
- * dd-resizable-handle.ts 6.0.2-dev
+ * dd-resizable-handle.ts 9.4.0-dev
  * Copyright (c) 2021-2022 Alain Dumesny - see GridStack root license
  */
 
@@ -72,7 +72,7 @@ export class DDResizableHandle {
   }
 
   /** @internal called on mouse down on us: capture move on the entire document (mouse might not stay on us) until we release the mouse */
-  protected _mouseDown(e: MouseEvent) {
+  protected _mouseDown(e: MouseEvent): void {
     this.mouseDownEvent = e;
     document.addEventListener('mousemove', this._mouseMove, true); // capture, not bubble
     document.addEventListener('mouseup', this._mouseUp, true);
@@ -85,7 +85,7 @@ export class DDResizableHandle {
   }
 
   /** @internal */
-  protected _mouseMove(e: MouseEvent) {
+  protected _mouseMove(e: MouseEvent): void {
     let s = this.mouseDownEvent;
     if (this.moving) {
       this._triggerEvent('move', e);
@@ -100,7 +100,7 @@ export class DDResizableHandle {
   }
 
   /** @internal */
-  protected _mouseUp(e: MouseEvent) {
+  protected _mouseUp(e: MouseEvent): void {
     if (this.moving) {
       this._triggerEvent('stop', e);
     }

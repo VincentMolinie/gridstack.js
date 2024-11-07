@@ -36,9 +36,6 @@
       cellHeight: 70,
       acceptWidgets: true,
       removable: true,
-      // old way, use global setupDragIn() instead
-      // dragIn: '.sidebar .grid-stack-item', // add draggable to class
-      // dragInOptions: { appendTo: 'body', helper: 'clone' },
       staticGrid: true
     });
     addEvents(grid);
@@ -50,7 +47,7 @@
       {x: 2, y: 3, w: 3, id: 'no_resize', noResize: true, content: 'no resize'},
       {x: 1, y: 3, id: 'locked', locked: true, content: 'locked'}
     ];
-    grid.load(serializedData, true);
+    grid.load(serializedData);
 
     GridStack.setupDragIn('.sidebar .grid-stack-item', { appendTo: 'body', helper: 'clone' });
 

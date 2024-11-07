@@ -1,5 +1,5 @@
 /**
- * touch.ts 6.0.2-dev
+ * touch.ts 9.4.0-dev
  * Copyright (c) 2021 Alain Dumesny - see GridStack root license
  */
 
@@ -10,11 +10,14 @@ import { DDManager } from './dd-manager';
  * should we use this instead ? (what we had for always showing resize handles)
  * /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
  */
-export const isTouch: boolean = ( 'ontouchstart' in document
+export const isTouch: boolean = typeof window !== 'undefined' && typeof document !== 'undefined' &&
+( 'ontouchstart' in document
   || 'ontouchstart' in window
   // || !!window.TouchEvent // true on Windows 10 Chrome desktop so don't use this
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   || ((window as any).DocumentTouch && document instanceof (window as any).DocumentTouch)
   || navigator.maxTouchPoints > 0
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   || (navigator as any).msMaxTouchPoints > 0
 );
 
@@ -113,9 +116,10 @@ function simulatePointerMouseEvent(e: PointerEvent, simulatedType: string) {
  * Handle the touchstart events
  * @param {Object} e The widget element's touchstart event
  */
-export function touchstart(e: TouchEvent) {
+export function touchstart(e: TouchEvent): void {
   // Ignore the event if another widget is already being handled
-  if (DDTouch.touchHandled) return;  DDTouch.touchHandled = true;
+  if (DDTouch.touchHandled) return;
+  DDTouch.touchHandled = true;
 
   // Simulate the mouse events
   // simulateMouseEvent(e, 'mouseover');
@@ -127,9 +131,9 @@ export function touchstart(e: TouchEvent) {
  * Handle the touchmove events
  * @param {Object} e The document's touchmove event
  */
-export function touchmove(e: TouchEvent) {
+export function touchmove(e: TouchEvent): void {
   // Ignore event if not handled by us
-  if (!DDTouch.touchHandled)  return;
+  if (!DDTouch.touchHandled) return;
 
   simulateMouseEvent(e, 'mousemove');
 }
@@ -138,7 +142,7 @@ export function touchmove(e: TouchEvent) {
  * Handle the touchend events
  * @param {Object} e The document's touchend event
  */
-export function touchend(e: TouchEvent) {
+export function touchend(e: TouchEvent): void {
 
   // Ignore event if not handled
   if (!DDTouch.touchHandled) return;
@@ -169,27 +173,31 @@ export function touchend(e: TouchEvent) {
  * see https://stackoverflow.com/questions/27908339/js-touch-equivalent-for-mouseenter
  * so instead of PointerEvent to still get enter/leave and send the matching mouse event.
  */
-export function pointerdown(e: PointerEvent) {
+export function pointerdown(e: PointerEvent): void {
+  // console.log("pointer down")
+  if (e.pointerType === 'mouse') return;
   (e.target as HTMLElement).releasePointerCapture(e.pointerId) // <- Important!
 }
 
-export function pointerenter(e: PointerEvent) {
+export function pointerenter(e: PointerEvent): void {
   // ignore the initial one we get on pointerdown on ourself
   if (!DDManager.dragElement) {
     // console.log('pointerenter ignored');
     return;
   }
   // console.log('pointerenter');
+  if (e.pointerType === 'mouse') return;
   simulatePointerMouseEvent(e, 'mouseenter');
 }
 
-export function pointerleave(e: PointerEvent) {
+export function pointerleave(e: PointerEvent): void {
   // ignore the leave on ourself we get before releasing the mouse over ourself
   // by delaying sending the event and having the up event cancel us
   if (!DDManager.dragElement) {
     // console.log('pointerleave ignored');
     return;
   }
+  if (e.pointerType === 'mouse') return;
   DDTouch.pointerLeaveTimeout = window.setTimeout(() => {
     delete DDTouch.pointerLeaveTimeout;
     // console.log('pointerleave delayed');

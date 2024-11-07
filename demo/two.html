@@ -9,6 +9,9 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="demo.css"/>
   <link rel="stylesheet" href="../dist/gridstack-extra.css"/>
+  <style type="text/css">
+    .with-lines { border: 1px dotted #777}
+  </style>
 
   <script src="../dist/gridstack-all.js"></script>
 </head>
@@ -56,15 +59,14 @@
       cellHeight: 70,
       disableOneColumnMode: true,
       float: true,
-      // dragIn: '.sidebar .grid-stack-item', // add draggable to class
-      // dragInOptions: { appendTo: 'body', helper: 'clone' }, // clone
       removable: '.trash', // true or drag-out delete class
-      acceptWidgets: function(el) { return true; } // function example, but can also be: true | false | '.someClass' value
+      // itemClass: 'with-lines', // test a custom additional class #2110
+      acceptWidgets: function(el) { return true } // function example, but can also be: true | false | '.someClass' value
     };
     let grids = GridStack.initAll(options);
     grids[1].float(false);
 
-    // new 4.x static method instead of setting up options on every grid (never been per grid really) but old options still works
+    // new 4.x static method instead of setting up options on every grid (never been per grid really)
     GridStack.setupDragIn('.sidebar .grid-stack-item', { appendTo: 'body', helper: myClone });
     // GridStack.setupDragIn(); // second call will now work (cache last values)
 
@@ -83,7 +85,9 @@
 
     // decide what the dropped item will be - for now just a clone but can be anything
     function myClone(event) {
-      return event.target.cloneNode(true);
+      const el = event.target.cloneNode(true);
+      el.setAttribute('gs-id', 'foo'); // TEST why clone element is not used directly on drop #2231
+      return el;
     }
 
     function toggleFloat(button, i) {

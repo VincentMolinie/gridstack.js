@@ -1,5 +1,5 @@
 /**
- * dd-droppable.ts 6.0.2-dev
+ * dd-droppable.ts 9.4.0-dev
  * Copyright (c) 2021-2022 Alain Dumesny - see GridStack root license
  */
 
@@ -9,12 +9,13 @@ import { DDBaseImplement, HTMLElementExtendOpt } from './dd-base-impl';
 import { Utils } from './utils';
 import { DDElementHost } from './dd-element';
 import { isTouch, pointerenter, pointerleave } from './dd-touch';
+import { DDUIData } from './types';
 
 export interface DDDroppableOpt {
   accept?: string | ((el: HTMLElement) => boolean);
-  drop?: (event: DragEvent, ui) => void;
-  over?: (event: DragEvent, ui) => void;
-  out?: (event: DragEvent, ui) => void;
+  drop?: (event: DragEvent, ui: DDUIData) => void;
+  over?: (event: DragEvent, ui: DDUIData) => void;
+  out?: (event: DragEvent, ui: DDUIData) => void;
 }
 
 // let count = 0; // TEST
@@ -155,7 +156,7 @@ export class DDDroppable extends DDBaseImplement implements HTMLElementExtendOpt
   protected _setupAccept(): DDDroppable {
     if (!this.option.accept) return this;
     if (typeof this.option.accept === 'string') {
-      this.accept = (el: HTMLElement) => el.matches(this.option.accept as string);
+      this.accept = (el: HTMLElement) => el.classList.contains(this.option.accept as string) || el.matches(this.option.accept as string);
     } else {
       this.accept = this.option.accept;
     }
@@ -163,7 +164,7 @@ export class DDDroppable extends DDBaseImplement implements HTMLElementExtendOpt
   }
 
   /** @internal */
-  protected _ui(drag: DDDraggable) {
+  protected _ui(drag: DDDraggable): DDUIData {
     return {
       draggable: drag.el,
       ...drag.ui()

@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/gridstack/gridstack.js/badge.svg?branch=develop)](https://coveralls.io/github/gridstack/gridstack.js?branch=develop)
 [![downloads](https://img.shields.io/npm/dm/gridstack.svg)](https://www.npmjs.com/package/gridstack)
 
-Mobile-friendly modern Typescript library for dashboard layout and creation. Making a drag-and-drop, multi-column responsive dashboard has never been easier. Has multiple bindings and works great with [React](https://reactjs.org/), [Vue](https://vuejs.org/), [Angular](https://angular.io/), [Knockout.js](http://knockoutjs.com), [Ember](https://www.emberjs.com/) and others (see [frameworks](#gridstackjs-for-specific-frameworks) section).
+Mobile-friendly modern Typescript library for dashboard layout and creation. Making a drag-and-drop, multi-column responsive dashboard has never been easier. Has multiple bindings and works great with [Angular](https://angular.io/) (included), [React](https://reactjs.org/), [Vue](https://vuejs.org/), [Knockout.js](http://knockoutjs.com), [Ember](https://www.emberjs.com/) and others (see [frameworks](#specific-frameworks) section).
 
 Inspired by no-longer maintained gridster, built with love.
 
@@ -15,9 +15,9 @@ If you find this lib useful, please donate [PayPal](https://www.paypal.me/alaind
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/alaind831)
 [![Donate](https://img.shields.io/badge/Donate-Venmo-g.svg)](https://www.venmo.com/adumesny)
 
-Join us on Slack: https://gridstackjs.slack.com
+Join us on Slack: [https://gridstackjs.slack.com](https://join.slack.com/t/gridstackjs/shared_invite/zt-1jobnclsy-FqGGeLX5dFPM_ZQzTunBsw)
 
-[![Slack Status](https://gridstackjs.troolee.com/badge.svg)](https://gridstackjs.slack.com)
+<!-- [![Slack Status](https://gridstackjs.com/badge.svg)](https://gridstackjs.slack.com) -->
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
@@ -28,13 +28,13 @@ Join us on Slack: https://gridstackjs.slack.com
   - [Include](#include)
   - [Basic usage](#basic-usage)
   - [Requirements](#requirements)
+  - [Specific frameworks](#specific-frameworks)
   - [Extend Library](#extend-library)
   - [Extend Engine](#extend-engine)
   - [Change grid columns](#change-grid-columns)
   - [Custom columns CSS](#custom-columns-css)
   - [Override resizable/draggable options](#override-resizabledraggable-options)
   - [Touch devices support](#touch-devices-support)
-- [gridstack.js for specific frameworks](#gridstackjs-for-specific-frameworks)
 - [Migrating](#migrating)
   - [Migrating to v0.6](#migrating-to-v06)
   - [Migrating to v1](#migrating-to-v1)
@@ -43,6 +43,9 @@ Join us on Slack: https://gridstackjs.slack.com
   - [Migrating to v4](#migrating-to-v4)
   - [Migrating to v5](#migrating-to-v5)
   - [Migrating to v6](#migrating-to-v6)
+  - [Migrating to v7](#migrating-to-v7)
+  - [Migrating to v8](#migrating-to-v8)
+  - [Migrating to v9](#migrating-to-v9)
 - [jQuery Application](#jquery-application)
 - [Changes](#changes)
 - [The Team](#the-team)
@@ -139,7 +142,21 @@ see [jsfiddle sample](https://jsfiddle.net/adumesny/jqhkry7g) as running example
 
 ## Requirements
 
-GridStack no longer requires external dependencies as of v1.0.0 (lodash was removed in v0.5.0 and jquery API in v1.0.0). v3 is a complete HTML5 re-write removing need for jquery (still available for legacy apps). v6 is native mouse and touch event for mobile support, and no longer have jquery-ui version. All you need to include now is `gridstack-all.js` and `gridstack.min.css` (layouts are done using CSS column based %).
+GridStack no longer requires external dependencies as of v1 (lodash was removed in v0.5 and jquery API in v1). v3 is a complete HTML5 re-write removing need for jquery. v6 is native mouse and touch event for mobile support, and no longer have jquery-ui version. All you need to include now is `gridstack-all.js` and `gridstack.min.css` (layouts are done using CSS column based %).
+
+## Specific frameworks
+
+search for ['gridstack' under NPM](https://www.npmjs.com/search?q=gridstack&ranking=popularity) for latest, more to come...
+
+- **Angular**: we now ship out of the box with Angular wrapper components - see <a href="https://github.com/gridstack/gridstack.js/tree/master/angular" target="_blank">Angular Component</a>.
+- **Angular9**: [lb-gridstack](https://github.com/pfms84/lb-gridstack) Note: very old v0.3 gridstack instance so recommend for **concept ONLY if you wish to use directive instead**. Code has **not been vented** at as I use components.
+- **AngularJS**: [gridstack-angular](https://github.com/kdietrich/gridstack-angular)
+- **Ember**: [ember-gridstack](https://github.com/yahoo/ember-gridstack)
+- **knockout**: see [demo](https://gridstackjs.com/demo/knockout.html) using component, but check [custom bindings ticket](https://github.com/gridstack/gridstack.js/issues/465) which is likely better approach.
+- **Rails**: [gridstack-js-rails](https://github.com/randoum/gridstack-js-rails)
+- **React**: see [demo](https://gridstackjs.com/demo/react.html) with [src](https://github.com/gridstack/gridstack.js/tree/master/demo/react.html), or  [react-gridstack-example](https://github.com/Inder2108/react-gridstack-example/tree/master/src/App.js), or read on what [hooks to use](https://github.com/gridstack/gridstack.js/issues/735#issuecomment-329888796)
+- **Vue**: see [demo](https://gridstackjs.com/demo/vue3js.html) with [v3 src](https://github.com/gridstack/gridstack.js/tree/master/demo/vue3js.html) or [v2 src](https://github.com/gridstack/gridstack.js/tree/master/demo/vue2js.html)
+- **Aurelia**: [aurelia-gridstack](https://github.com/aurelia-ui-toolkits/aurelia-gridstack), see [demo](https://aurelia-ui-toolkits.github.io/aurelia-gridstack/)
 
 ## Extend Library
 
@@ -159,7 +176,7 @@ grid.printCount();
 
 ## Extend Engine
 
-You can now (5.1+) easily create your own layout engine to further customize you usage. Here is a typescript example
+You can now (5.1+) easily create your own layout engine to further customize your usage. Here is a typescript example
 
 ```ts
 import { GridStack, GridStackEngine, GridStackNod, GridStackMoveOpts } from 'gridstack';
@@ -167,7 +184,7 @@ import { GridStack, GridStackEngine, GridStackNod, GridStackMoveOpts } from 'gri
 class CustomEngine extends GridStackEngine {
 
   /** refined this to move the node to the given new location */
-  public moveNode(node: GridStackNode, o: GridStackMoveOpts): boolean {
+  public override moveNode(node: GridStackNode, o: GridStackMoveOpts): boolean {
     // keep the same original X and Width and let base do it all...
     o.x = node.x;
     o.w = node.w;
@@ -203,57 +220,44 @@ See example: [2 grids demo](http://gridstack.github.io/gridstack.js/demo/two.htm
 
 If you need > 12 columns or want to generate the CSS manually you will need to generate CSS rules for `.grid-stack-item[gs-w="X"]` and `.grid-stack-item[gs-x="X"]`.
 
-For instance for 3-column grid you need to rewrite CSS to be:
+For instance for 4-column grid you need CSS to be:
 
 ```css
-.grid-stack-item[gs-w="3"]  { width: 100% }
-.grid-stack-item[gs-w="2"]  { width: 66.67% }
-.grid-stack-item[gs-w="1"]  { width: 33.33% }
+.gs-4 > .grid-stack-item[gs-x="1"]  { left: 25% }
+.gs-4 > .grid-stack-item[gs-x="2"]  { left: 50% }
+.gs-4 > .grid-stack-item[gs-x="3"]  { left: 75% }
 
-.grid-stack-item[gs-x="2"]  { left: 66.67% }
-.grid-stack-item[gs-x="1"]  { left: 33.33% }
+.gs-4 > .grid-stack-item { width: 25% }
+.gs-4 > .grid-stack-item[gs-w="2"]  { width: 50% }
+.gs-4 > .grid-stack-item[gs-w="3"]  { width: 75% }
+.gs-4 > .grid-stack-item[gs-w="4"]  { width: 100% }
 ```
 
-For 4-column grid it should be:
+Better yet, here is a SCSS code snippet, you can use sites like [sassmeister.com](https://www.sassmeister.com/) to generate the CSS for you instead:
 
-```css
-.grid-stack-item[gs-w="4"]  { width: 100% }
-.grid-stack-item[gs-w="3"]  { width: 75% }
-.grid-stack-item[gs-w="2"]  { width: 50% }
-.grid-stack-item[gs-w="1"]  { width: 25% }
+```scss
+$columns: 20;
+@function fixed($float) {
+  @return round($float * 1000) / 1000; // total 2+3 digits being %
+}
+.gs-#{$columns} > .grid-stack-item {
 
-.grid-stack-item[gs-x="3"]  { left: 75% }
-.grid-stack-item[gs-x="2"]  { left: 50% }
-.grid-stack-item[gs-x="1"]  { left: 25% }
-```
+  width: fixed(100% / $columns);
 
-and so on.
-
-Better yet, here is a SASS code snippet which can make life much easier (Thanks to @ascendantofrain, [#81](https://github.com/gridstack/gridstack.js/issues/81) and @StefanM98, [#868](https://github.com/gridstack/gridstack.js/issues/868)) and you can use sites like [sassmeister.com](https://www.sassmeister.com/) to generate the CSS for you instead:
-
-```sass
-@use "sass:math";
-.grid-stack > .grid-stack-item {
-
-  $gridstack-columns: 12;
-
-  min-width: 100%/$gridstack-columns;
-
-  @for $i from 0 through $gridstack-columns {
-    &[gs-w='#{$i}'] { width: (100% / $gridstack-columns) * $i; }
-    &[gs-x='#{$i}'] { left: (100% / $gridstack-columns) * $i; }
-    &[gs-min-w='#{$i}'] { min-width: (100% / $gridstack-columns) * $i; }
-    &[gs-max-w='#{$i}'] { max-width: (100% / $gridstack-columns) * $i; }
+  @for $i from 1 through $columns - 1 {
+    &[gs-x='#{$i}'] { left: fixed((100% / $columns) * $i); }
+    &[gs-w='#{$i+1}'] { width: fixed((100% / $columns) * ($i+1)); }
   }
-} 
+}
 ```
 
-you can also use the SASS [src/gridstack-extra.scss](https://github.com/gridstack/gridstack.js/tree/master/src/gridstack-extra.scss) included in NPM package and modify to add more columns.
+you can also use the SCSS [src/gridstack-extra.scss](https://github.com/gridstack/gridstack.js/tree/master/src/gridstack-extra.scss) included in NPM package and modify to add more columns.
 
 Sample gulp command for 30 columns:
 ```js
 gulp.src('node_modules/gridstack/dist/src/gridstack-extra.scss')
-        .pipe(replace('$gridstack-columns: 11 !default;','$gridstack-columns: 30;'))
+        .pipe(replace('$start: 2 !default;','$start: 30;'))
+        .pipe(replace('$end: 11 !default;','$end: 30;'))
         .pipe(sass({outputStyle: 'compressed'}))
         .pipe(rename({extname: '.min.css'}))
         .pipe(gulp.dest('dist/css'))
@@ -281,25 +285,12 @@ This option is now the default:
 
 ```js
 let options = {
-  alwaysShowResizeHandle: 'mobile' // which defaults to /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+  alwaysShowResizeHandle: 'mobile' // true if we're on mobile devices
 };
 GridStack.init(options);
 ```
 
 See [example](http://gridstack.github.io/gridstack.js/demo/mobile.html).
-
-# gridstack.js for specific frameworks
-
-search for ['gridstack' under NPM](https://www.npmjs.com/search?q=gridstack&ranking=popularity) for latest, more to come...
-
-- **Angular9**: [lb-gridstack](https://github.com/pfms84/lb-gridstack) Note: very old v0.3 gridstack instance so recommend for concept ONLY. You can do component or directive. Working on exposing the Angular component wrapper we use internally.
-- **AngularJS**: [gridstack-angular](https://github.com/kdietrich/gridstack-angular)
-- **Ember**: [ember-gridstack](https://github.com/yahoo/ember-gridstack)
-- **knockout**: see [demo](https://gridstackjs.com/demo/knockout.html) using component, but check [custom bindings ticket](https://github.com/gridstack/gridstack.js/issues/465) which is likely better approach.
-- **Rails**: [gridstack-js-rails](https://github.com/randoum/gridstack-js-rails)
-- **React**: see [demo](https://gridstackjs.com/demo/react.html) with [src](https://github.com/gridstack/gridstack.js/tree/master/demo/react.html), or  [react-gridstack-example](https://github.com/Inder2108/react-gridstack-example/tree/master/src/App.js), or read on what [hooks to use](https://github.com/gridstack/gridstack.js/issues/735#issuecomment-329888796)
-- **Vue**: see [demo](https://gridstackjs.com/demo/vue3js.html) with [v3 src](https://github.com/gridstack/gridstack.js/tree/master/demo/vue3js.html) or [v2 src](https://github.com/gridstack/gridstack.js/tree/master/demo/vue2js.html)
-- **Aurelia**: [aurelia-gridstack](https://github.com/aurelia-ui-toolkits/aurelia-gridstack), see [demo](https://aurelia-ui-toolkits.github.io/aurelia-gridstack/)
 
 # Migrating
 ## Migrating to v0.6
@@ -436,9 +427,28 @@ You can now drag in/out of parent into nested child, with new API parameters val
 
 ## Migrating to v6
 
-the API did not really change from v5, but a complete re-write of Drag&Drop to use native mouseevent (instead of HTML draggable=true which is buggy on Mac Safari, and doesn't work on mobile devices) and touchevent (mobile), and we no longer have jquery ui option (wasn't working well for nested grids, didn't want to maintain legacy lib).
+the API did not really change from v5, but a complete re-write of Drag&Drop to use native `mouseevent` (instead of HTML draggable=true which is buggy on Mac Safari, and doesn't work on mobile devices) and `touchevent` (mobile), and we no longer have jquery ui option (wasn't working well for nested grids, didn't want to maintain legacy lib).
 
 The main difference is you only need to include gridstack.js and get D&D (desktop and mobile) out of the box for the same size as h5 version.
+
+## Migrating to v7
+
+New addition, no API breakage per say. See release notes about creating sub-grids on the fly.
+
+## Migrating to v8
+
+Possible breaking change if you use nested grid JSON format, or original Angular wrapper, or relied on specific CSS paths. Also target is now ES2020 (see release notes).
+* `GridStackOptions.subGrid` -> `GridStackOptions.subGridOpts` rename. We now have `GridStackWidget.subGridOpts` vs `GridStackNode.subGrid` (was both types which is error prone)
+* `GridStackOptions.addRemoveCB` -> `GridStack.addRemoveCB` is now global instead of grid option
+* removed `GridStackOptions.dragInOptions` since `GridStack.setupDragIn()` has it replaced since 4.0
+* remove `GridStackOptions.minWidth` obsolete since 5.1, use `oneColumnSize` instead
+* CSS rules removed `.grid-stack` prefix for anything already gs based, 12 column (default) now uses `.gs-12`, extra.css is less than 1/4th it original size!, `gs-min|max_w|h` attribute no longer written (but read)
+
+## Migrating to v9
+
+New addition - see release notes about `sizeToContent` feature.
+Possible break:
+* `GridStack.onParentResize()` is now called `onResize()` as grid now directly track size change, no longer involving parent per say to tell us anything. Note sure why it was public.
 
 # jQuery Application
 
@@ -486,4 +496,4 @@ View our change log [here](https://github.com/gridstack/gridstack.js/tree/master
 
 # The Team
 
-gridstack.js is currently maintained by [Alain Dumesny](https://github.com/adumesny) and [Dylan Weiss](https://github.com/radiolips), originally created by [Pavel Reznikov](https://github.com/troolee). We appreciate [all contributors](https://github.com/gridstack/gridstack.js/graphs/contributors) for help.
+gridstack.js is currently maintained by [Alain Dumesny](https://github.com/adumesny), before that [Dylan Weiss](https://github.com/radiolips), originally created by [Pavel Reznikov](https://github.com/troolee). We appreciate [all contributors](https://github.com/gridstack/gridstack.js/graphs/contributors) for help.

@@ -15,7 +15,7 @@
 
   <!-- support for IE -->
   <script src="../dist/es5/gridstack-poly.js"></script>
-  <script src="../dist/es5/gridstack.js"></script>
+  <script src="../dist/es5/gridstack-all.js"></script>
 
   <style type="text/css">
     .grid-stack-item-removing {
@@ -61,10 +61,10 @@
     let grid = GridStack.init({
       cellHeight: 70,
       acceptWidgets: true,
-      dragIn: '.newWidget',  // class that can be dragged from outside
-      dragInOptions: { appendTo: 'body', helper: 'clone' }, // clone or can be your function
       removable: '#trash', // drag-out delete class
+      disableOneColumnMode: true,
     });
+    GridStack.setupDragIn('.newWidget', { appendTo: 'body', helper: 'clone' });
 
     let items = [
       {x: 0, y: 0, w: 4, h: 2, content: '1'},

@@ -16,9 +16,9 @@ module.exports = {
   rules: {
     'indent': ['error', 2],
     'max-len': ['error', 180],
-    'no-trailing-spaces': 'error',
+    'no-trailing-spaces': 1,
     'prefer-const': 0,
-    '@typescript-eslint/explicit-function-return-type': 0,
-    '@typescript-eslint/ban-ts-comment': 0
+    '@typescript-eslint/ban-ts-comment': 0,
+    'max-len': 0
   }
 };

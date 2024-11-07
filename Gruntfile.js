@@ -14,6 +14,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     sass: {
       options: {
+        // precision: 3, // doesn't work
         implementation: sass,
 			  sourceMap: false
       },
@@ -42,6 +43,11 @@ module.exports = function(grunt) {
           'dist/es5/gridstack-poly.js': ['src/gridstack-poly.js'],
           'dist/src/gridstack.scss': ['src/gridstack.scss'],
           'dist/src/gridstack-extra.scss': ['src/gridstack-extra.scss'],
+          'dist/angular/README.md': ['angular/README.md'],
+          'dist/angular/src/gridstack.component.ts': ['angular/projects/lib/src/lib/gridstack.component.ts'],
+          'dist/angular/src/gridstack-item.component.ts': ['angular/projects/lib/src/lib/gridstack-item.component.ts'],
+          'dist/angular/src/base-widget.ts': ['angular/projects/lib/src/lib/base-widget.ts'],
+          'dist/angular/src/gridstack.module.ts': ['angular/projects/lib/src/lib/gridstack.module.ts'],
         }
       }
     },
